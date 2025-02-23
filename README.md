@@ -1,2 +1,6 @@
-# stock-portfolio-s-performance
-IN PROGRESS | Generator of stock portfolio's performance chart from history of transactions
+# IN PROGRESS
+
+# Stock portfolio performance
+Generator of stock portfolio's performance chart from history of transactions
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
