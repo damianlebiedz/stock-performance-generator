@@ -1,0 +1,19 @@
+(en) About the .csv files:
+
+- they should be formatted as the TEMPLATE files to run a generator
+- purchase/sale value should be in the currency of the account
+- it works only on stock positions, you should remove CFD positions from the history to avoid crashes of generator
+- generator was created based on history of transactions from XStation5 platform on XTB (xtb.com) brokerage, it works best with data from it and I don't promise it will be working on data from other brokerage companies
+
+
+(pl) O plikach .csv:
+
+- powinny być sformatowane według szablonów TEMPLATE
+- wartość zakupu/wartość sprzedaży to wartości w walucie konta
+- działa jednie na danych z akcji, aby generator działał poprawnie trzeba usunąć z danych pozycje na kontraktach CFD
+- program został stworzony w oparciu o historię transakcji wyeksportowaną z platformy XStation5 od XTB (xtb.com), dane od innych brokerów mogą nie działać
+
+
+
+License: MIT
+More information in LICENSE file
