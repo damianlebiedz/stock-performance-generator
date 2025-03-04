@@ -1,5 +1,5 @@
-data/CLOSED POSITION.csv
-data/OPEN POSITION.csv
+data/CLOSED POSITIONS.csv
+data/OPEN POSITIONS.csv
 
 *.png
 *.ipynb
