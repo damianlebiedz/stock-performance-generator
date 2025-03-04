@@ -1,5 +1,9 @@
 import pandas as pd
 
+def calculate_portfolio(open_positions):
+    grouped_data = open_positions.groupby('Symbol')['Sale value'].sum()
+    return grouped_data
+
 def calculate_daily_performance(closed_positions, open_positions):
     closed_positions['Close time'] = pd.to_datetime(closed_positions['Close time'], format="%d.%m.%Y %H:%M",
                                                     dayfirst=True)

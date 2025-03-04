@@ -10,6 +10,7 @@ def load_closed_positions(file_path):
         df['Profit'] = df['Sale value'] - df['Purchase value']
         print("Closed positions loaded successfully")
         return df
+
     except Exception as e:
         print(f"Error in load_closed_positions: {e}")
         return pd.DataFrame()
@@ -26,18 +27,18 @@ def load_open_positions(file_path, market_data, exchange_rates):
             print(f"Processing symbol: {symbol}")
             if symbol in market_data.index:
                 print(f"  Match found in market_data")
-                close_price = market_data[symbol]
+                ticker = yf.Ticker(symbol)
+                close_price = ticker.fast_info.previous_close
                 df.loc[df['Formatted Symbol'] == symbol, 'Close price'] = close_price
             else:
                 print(f"  No match found in market_data")
                 df.loc[df['Formatted Symbol'] == symbol, 'Close price'] = df.loc[df['Formatted Symbol'] == symbol, 'Open price']
 
         df['Currency'] = df['Symbol'].apply(lambda x: x.split('.')[-1] if '.' in x else 'PLN')
-        print("Unikalne waluty:", df['Currency'].unique())
+        print("Waluty:", df['Currency'].unique())
 
         df['Exchange ratio'] = df['Currency'].apply(map_exchange_rate, args=(exchange_rates,))
 
-        # Convert all relevant columns to float
         for col in ['Open price', 'Close price', 'Purchase value', 'Volume', 'Exchange ratio']:
             df[col] = df[col].astype(str).str.replace(',', '.').astype(float)
 
@@ -46,6 +47,7 @@ def load_open_positions(file_path, market_data, exchange_rates):
 
         print("Open positions loaded successfully")
         return df
+
     except Exception as e:
         print(f"Error in load_open_positions: {e}")
         return pd.DataFrame()
@@ -60,6 +62,7 @@ def fetch_exchange_rates():
         exchange_rates["PLN"] = 1.0
         print("Exchange rates fetched successfully:", exchange_rates)
         return exchange_rates
+
     except Exception as e:
         print(f"Error in fetch_exchange_rates: {e}")
         return {}
@@ -81,6 +84,7 @@ def fetch_market_data(symbols, days_back=5):
         last_available_close = market_data.iloc[-1]
         print("Market data fetched successfully")
         return last_available_close
+
     except Exception as e:
         print(f"Error in fetch_market_data: {e}")
         return pd.Series()
