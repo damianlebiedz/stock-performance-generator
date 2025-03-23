@@ -1,6 +1,6 @@
 # IN PROGRESS | Stock portfolio manager
-1. Generator of stock portfolio's pie chart
-2. Generator of stock portfolio's daily profit/loss chart from history of transactions
+1. Generator of stock portfolio pie chart
+2. Generator of stock portfolio daily profit/loss chart from history of transactions
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
