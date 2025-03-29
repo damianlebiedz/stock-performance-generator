@@ -1,15 +1,18 @@
-from modules.data_loader import load_closed_positions, load_open_positions, fetch_exchange_rates
-from modules.portfolio_calculator import calculate_daily_portfolio_profit
-#from modules.plot_generator import plot_daily_performance, plot_portfolio
+from modules.data_loader import load_file, merge_df, format_df, load_currencies, load_timeframe, load_stock_history
+from modules.plot_generator import plot_daily_performance
 
 if __name__ == "__main__":
-    closed_positions = load_closed_positions("data/CLOSED POSITIONS.csv")
+    closed_positions = load_file("data/CLOSED POSITIONS.csv")
+    open_positions = load_file("data/OPEN POSITIONS.csv")
 
-    exchange_rates = fetch_exchange_rates()
-    symbols = closed_positions["Symbol"].unique().tolist()
+    df = merge_df(closed_positions, open_positions)
+    format_df(df)
 
-    open_positions = load_open_positions("data/OPEN POSITIONS.csv", exchange_rates)
+    currencies = load_currencies(df)
+    timeframe = load_timeframe(df)
 
-    #BŁĄD - do zrobienia
-    portfolio_profit_df = calculate_daily_portfolio_profit(open_positions, closed_positions)
-    print(portfolio_profit_df)
+    load_stock_history(timeframe, df)
+    print(timeframe)
+    print(timeframe.dtypes)
+
+    plot_daily_performance(timeframe)
