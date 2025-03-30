@@ -16,9 +16,9 @@ Created to automate the analysis of a stock portfolio based on transaction histo
 4. Presenting data on a line graph.
 
 Future functionalities (to do):
-- Comparison of portfolio profit vs SP500/other on a line graph
-- Analysis of current portfolio composition (P/E, Markovitz, matrix of correlation etc.)
-- pytest
+- Comparison of portfolio profit vs SP500/other on a line graph.
+- Analysis of current portfolio composition (P/E, Markovitz, matrix of correlation etc.).
+- Testing by pytest.
 
 ## Technologies
 - Python 3
