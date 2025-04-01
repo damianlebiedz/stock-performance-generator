@@ -19,12 +19,18 @@ Future functionalities (to do):
 - Comparison of portfolio profit vs SP500/other on a line graph.
 - Analysis of current portfolio composition (P/E, Markovitz, matrix of correlation etc.).
 - Testing by pytest.
+- Final, easy to run version with .exe files.
+- The program is supposed to create a full raport in html/pdf format with all the generated data.
 
 ## Technologies
 - Python 3
 - pandas
 - matplotlib
 - yfinance
-
+  
+(future technologies to use):
+- pyplot/seaborn
+- pytest
+  
 ## Contact
 Damian Lebiedź | https://damianlebiedz.github.io/contact.html
