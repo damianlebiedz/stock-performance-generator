@@ -2,7 +2,6 @@ data/CLOSED POSITIONS.csv
 data/OPEN POSITIONS.csv
 
 *.png
-*.ipynb
 
 .idea
 .ipynb_checkpoints

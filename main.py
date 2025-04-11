@@ -1,5 +1,7 @@
-from modules.data_loader import load_file, merge_df, format_df, load_currencies, load_timeframe, load_stock_history
-from modules.plot_generator import plot_daily_performance
+from modules.data_loader import *
+from modules.stocks_loader import *
+from modules.summary_loader import *
+from modules.plot_generator import *
 
 if __name__ == "__main__":
     closed_positions = load_file("data/CLOSED POSITIONS.csv")
@@ -8,11 +10,10 @@ if __name__ == "__main__":
     df = merge_df(closed_positions, open_positions)
     format_df(df)
 
-    currencies = load_currencies(df)
-    timeframe = load_timeframe(df)
+    unique_tickers = df['Formatted Symbol'].unique()
 
-    load_stock_history(timeframe, df)
-    print(timeframe)
-    print(timeframe.dtypes)
+    all_stocks = all_stocks_information(unique_tickers, df)
+    summary = load_summary(all_stocks)
 
-    plot_daily_performance(timeframe)
+    stock_plot(all_stocks)
+    summary_plot(summary)
