@@ -13,7 +13,9 @@ if __name__ == "__main__":
     unique_tickers = df['Formatted Symbol'].unique()
 
     all_stocks = all_stocks_information(unique_tickers, df)
+    print(all_stocks)
     summary = load_summary(all_stocks)
+    print(summary)
 
     stock_plot(all_stocks)
     summary_plot(summary)

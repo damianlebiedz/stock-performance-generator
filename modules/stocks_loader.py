@@ -74,6 +74,23 @@ def stock_positions(ticker, df):
         print(f"Error in stock_positions: {e}")
         return pd.DataFrame()
 
+def stock_information(ticker, df):
+    informations = []
+    try:
+        timeframe = stock_history(ticker, df)
+        positions = stock_positions(ticker, df)
+        # fast_info = yf.Ticker(ticker).fast_info #uzupełnić potrzebne
+        mean_price = ...
+        mean_exchange_ratio = ...
+        informations.append({'Fast info': ..., 'Timeframe': timeframe, 'Positions': positions, 'Mean price': mean_price,
+                             'Mean exchange ratio': mean_exchange_ratio})
+
+        return informations
+
+    except Exception as e:
+        print(f"Error in stock_information: {e}")
+        return pd.DataFrame()
+
 def all_stocks_information(unique_tickers, df):
     try:
         stocks = []
@@ -90,21 +107,4 @@ def all_stocks_information(unique_tickers, df):
 
     except Exception as e:
         print(f"Error in all_stocks_history: {e}")
-        return pd.DataFrame()
-
-def stock_information(ticker, df):
-    informations = []
-    try:
-        timeframe = stock_history(ticker, df)
-        positions = stock_positions(ticker, df)
-        # fast_info = yf.Ticker(ticker).fast_info #uzupełnić potrzebne
-        mean_price = ...
-        mean_exchange_ratio = ...
-        informations.append({'Fast info': ..., 'Timeframe': timeframe, 'Positions': positions, 'Mean price': mean_price,
-                             'Mean exchange ratio': mean_exchange_ratio})
-
-        return informations
-
-    except Exception as e:
-        print(f"Error in stock_information: {e}")
         return pd.DataFrame()

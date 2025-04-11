@@ -1,6 +1,5 @@
 
-
-def format_symbol_for_yf(symbol): #wrzucić do kontrolera
+def format_symbol_for_yf(symbol):
     if symbol.endswith('.UK'):
         return symbol[:-3] + '.L'
     elif symbol.endswith('.US'):
@@ -9,7 +8,7 @@ def format_symbol_for_yf(symbol): #wrzucić do kontrolera
         return symbol[:-3] + '.PA'
     return symbol
 
-def format_currency_for_yf(symbol): #wrzucić do kontrolera
+def format_currency_for_yf(symbol):
     if symbol.endswith('.UK'):
         return 'GBP'
     elif symbol.endswith('.US'):
