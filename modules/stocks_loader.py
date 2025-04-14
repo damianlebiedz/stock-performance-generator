@@ -8,10 +8,9 @@ def stock_timeframe(ticker, df):
         filtered_df = df[df['Formatted Symbol'] == f'{ticker}']
         start_date = min(filtered_df['Open time'])
         end_date = max(filtered_df['Close time'])
-        business_days = pd.date_range(start=start_date.date(), end=end_date.date(), freq='B')  # nie działa dla crypto!
-        timeframe = pd.DataFrame(
-            {'Date': business_days, 'Volume': 0.0, 'Profit': 0.0, 'Profit cumulated': 0.0, 'Daily change': 0.0,
-             'Total change': 0.0})  # dodać in PLN (ryzyko walutowe) każdego profitu
+        business_days = pd.date_range(start=start_date.date(), end=end_date.date(), freq='B')
+        timeframe = pd.DataFrame({'Date': business_days, 'Volume': 0.0, 'Total profit': 0.0,
+                                  'Total change [%]': 0.0})
 
         return timeframe
 
@@ -19,7 +18,8 @@ def stock_timeframe(ticker, df):
         print(f"Error in stock_timeframe: {e}")
         return pd.DataFrame()
 
-def load_position(stock_timeframe, position):  # obsługa df pozycji, zwracanie do danych o spółce śrendiej ceny zakupu i kursu
+
+def load_position(stock_timeframe, position):
     try:
         filtered_timeframe = stock_timeframe[
             (stock_timeframe['Date'] >= position['Open time']) & (stock_timeframe['Date'] <= position['Close time'])]
@@ -38,17 +38,19 @@ def load_position(stock_timeframe, position):  # obsługa df pozycji, zwracanie 
                 purchase_value = float(position['Open price'].replace(',', '.'))
                 sale_value = stock_price
                 profit = sale_value - purchase_value
-                stock_timeframe.loc[index, 'Profit'] += profit
+                total_change = (sale_value - purchase_value) / purchase_value
+                stock_timeframe.loc[index, 'Total change [%]'] = total_change
+                stock_timeframe.loc[index, 'Total profit'] += profit
 
             except Exception as e:
                 # print(f"Error retrieving data for {position['Formatted Symbol']} on {date}: {e}")
-                # return None
                 stock_timeframe.drop(index, inplace=True)  # Usuń wiersz w przypadku błędu
                 continue
 
     except Exception as e:
         print(f"Error in load_position: {e}")
         return pd.DataFrame()
+
 
 def stock_history(ticker, df):
     try:
@@ -65,6 +67,7 @@ def stock_history(ticker, df):
     except Exception as e:
         print(f"Error in stock_history: {e}")
 
+
 def stock_positions(ticker, df):
     try:
         positions = df[df['Formatted Symbol'] == ticker]
@@ -73,6 +76,7 @@ def stock_positions(ticker, df):
     except Exception as e:
         print(f"Error in stock_positions: {e}")
         return pd.DataFrame()
+
 
 def stock_information(ticker, df):
     informations = []
@@ -91,6 +95,7 @@ def stock_information(ticker, df):
         print(f"Error in stock_information: {e}")
         return pd.DataFrame()
 
+
 def all_stocks_information(unique_tickers, df):
     try:
         stocks = []
@@ -100,11 +105,11 @@ def all_stocks_information(unique_tickers, df):
                 stocks.append({'Ticker': ticker, 'Informations': informations})
 
             except Exception as e:
-                print(f"Error in all_stocks_history in {ticker}: {e}")
+                print(f"Error in all_stocks_information in {ticker}: {e}")
                 continue
 
         return stocks
 
     except Exception as e:
-        print(f"Error in all_stocks_history: {e}")
+        print(f"Error in all_stocks_information: {e}")
         return pd.DataFrame()

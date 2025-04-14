@@ -11,6 +11,7 @@ def load_file(file_path):
         print(f"Error in load_file: {e}")
         return pd.DataFrame()
 
+
 def merge_df(file_1, file_2): #sprawdzić wyjątki
     try:
         df = pd.concat([file_1, file_2], ignore_index=True)
@@ -18,6 +19,7 @@ def merge_df(file_1, file_2): #sprawdzić wyjątki
     except Exception as e:
         print(f"Error in merge_df: {e}")
         return pd.DataFrame()
+
 
 def format_df(df):  # sprawdzić wszystkie przypadki złego formatu, zrobić wyjątki
     try:
