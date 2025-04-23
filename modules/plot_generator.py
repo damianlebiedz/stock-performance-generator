@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-
+import plotly.express as px
 
 def stock_plot(all_stocks):
     try:
