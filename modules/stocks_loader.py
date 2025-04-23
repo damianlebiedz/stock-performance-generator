@@ -54,11 +54,6 @@ def load_position(stock_timeframe, position):
         stock_timeframe.loc[first_index, 'Purchase value'] += purchase_value
         stock_timeframe.loc[first_index, 'Current value'] += purchase_value
 
-        # if pd.notna(position['Close price']):
-        #     sale_value = position['Close price'] * position['Volume']
-        #     stock_timeframe.loc[stock_timeframe.index[-1], 'Current value'] += sale_value
-        ### OBSŁUŻYĆ ZAZNACZANIE NA WYKRESIE CENY SPRZEDAŻY
-
     except Exception as e:
         print(f"Error in load_position: {e}")
         return pd.DataFrame()
@@ -87,7 +82,7 @@ def stock_history(ticker, df):
 
 def stock_positions(ticker, df):
     try:
-        positions = df[df['Formatted Symbol'] == ticker]
+        positions = df[df['Formatted Symbol'] == ticker].copy()
 
         for col in ['Open price', 'Close price', 'Purchase value', 'Sale value']:
             positions[col] = positions[col].str.replace(',', '.', regex=False).astype(float)
