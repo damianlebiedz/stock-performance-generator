@@ -100,17 +100,16 @@ def stock_positions(ticker, df):
 
 
 def stock_information(ticker, df):
-    informations = []
+    information = []
     try:
         timeframe = stock_history(ticker, df)
         positions = stock_positions(ticker, df)
         # fast_info = yf.Ticker(ticker).fast_info #uzupełnić potrzebne
-        mean_buy_price = ...
         mean_exchange_ratio = ...
-        informations.append({'Fast info': ..., 'Timeframe': timeframe, 'Positions': positions, 'Mean buy price': mean_buy_price,
+        information.append({'Fast info': ..., 'Timeframe': timeframe, 'Positions': positions,
                              'Mean exchange ratio': mean_exchange_ratio})
 
-        return informations
+        return information
 
     except Exception as e:
         print(f"Error in stock_information: {e}")
