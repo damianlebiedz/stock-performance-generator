@@ -1,6 +1,6 @@
 # Stock portfolio analysis (in progress)
 
-Created to automate the analysis of a stock portfolio based on transaction history in a spreadsheet.
+This project is created to automate the analysis of a stock portfolio based on transaction history.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
