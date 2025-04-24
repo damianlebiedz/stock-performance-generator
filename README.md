@@ -1,4 +1,4 @@
-# Stock portfolio analysis (Project in progress)
+# Stock portfolio analysis (in progress)
 
 Created to automate the analysis of a stock portfolio based on transaction history in a spreadsheet.
 
