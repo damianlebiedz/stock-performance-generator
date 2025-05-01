@@ -1,50 +1,48 @@
-# Stock portfolio analysis (in progress)
+# Stock Portfolio Performance
 
-This project is created to automate the analysis of a stock portfolio based on transaction history.
+> [!NOTE]
+> This project is still in progress.
+ 
+This project was created to automate the analysis of a stock portfolio based on transaction history. It generates the performance of the assets in the portfolio as well as the entire portfolio and compares it with the overall market.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 - [Setup](#setup)
 - [Functionalities](#functionalities)
 - [Technologies](#technologies)
-- [View](#view)
 - [Contact](#contact)
 
 ## Setup
-> /data folder:
 
 > [!IMPORTANT]
-> Make sure that your history of transactions spreadsheets are formatted like in the template files:
+> Prepare spreadsheets with transaction history as specified in the `data/README.md` file to run this program!
 
-CLOSED POSITIONS.csv file:
+The `data/CLOSED POSITIONS.csv` file should look like this:
 
-<img src="https://github.com/user-attachments/assets/a0515a14-2879-4c11-ab07-9aad9e26ee9b" width="80%">
-<p></p>
+![Zrzut ekranu 2025-05-01 122857](https://github.com/user-attachments/assets/4fc10637-17fa-42c6-9fcc-af73d971d229)
 
-OPEN POSITIONS.csv file:
+The `data/OPEN POSITIONS.csv` file should look like this:
 
-<img src="https://github.com/user-attachments/assets/bacac85e-03f2-41c2-9f42-fe06e2f31456" width="80%">
-<p></p>
-
-> [!TIP]
-> You can use "(TEMPLATE).xlsx" file. Paste your data into the appropriate table and export each one into .csv file.
+![Zrzut ekranu 2025-05-01 122920](https://github.com/user-attachments/assets/043ec628-a089-4bc7-b225-61189c12d755)
 
 ## Functionalities
 
-1. Downloading data from a transaction history spreadsheet matched to the form as in the template (/data).
-2. Cleaning data and formatting it so that the algorithm can analyze it.
-3. Creating a daily dataframe with the profit and % change of the portfolio composition each day.
-4. Presenting data on a line graph.
+1. Downloads data from the transaction history sheets and prepares it for analysis.
+2. Creates a dataframes with the historical daily and total change of each asset in the portfolio composition.
+3. Creates a dataframe with the historical daily and total change of the entire portfolio.
+4. Visualizes data on charts.
+
+### Future features:
+
+- Compares portfolio performance with the overall market.
+- Adds currency risk and checks the impact of potential currency hedging on the result.
+- Generates html raport with the interactive charts.
 
 ## Technologies
 - Python 3
 - pandas
-- matplotlib
 - yfinance
-
-## View
-<img src="https://github.com/user-attachments/assets/eb89da31-80b5-4c8e-9838-7ede5ed6053c" width="40%">
-<img src="https://github.com/user-attachments/assets/917ae8bb-d76f-405e-a7cb-85570f99856d" width="49%">
+- matplotlib
 
 ## Contact
 Damian Lebiedź | https://damianlebiedz.github.io/contact.html
