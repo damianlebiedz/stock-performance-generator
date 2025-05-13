@@ -1,6 +1,3 @@
 pandas
 yfinance
-matplotlib
-dash
 plotly
-dash_bootstrap_components

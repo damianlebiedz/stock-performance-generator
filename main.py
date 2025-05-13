@@ -1,9 +1,8 @@
-from modules.data_loader import *
-from modules.stocks_loader import *
-from modules.summary_loader import *
-from modules.plot_generator import *
-# from modules.report_generator import *
-# from dash import Dash
+import pandas as pd
+from modules.data_loader import load_file, merge_df, format_df
+from modules.stocks_loader import all_stocks_information
+from modules.summary_loader import load_summary
+from modules.plot_generator import stock_plot, summary_plot
 
 
 if __name__ == "__main__":
@@ -21,11 +20,5 @@ if __name__ == "__main__":
     all_stocks = all_stocks_information(unique_tickers, df)
     summary = load_summary(all_stocks)
 
-    print(all_stocks)
-    print(summary)
-
     stock_plot(all_stocks)
     summary_plot(summary)
-
-    # app = generate_summary_report(summary)
-    # app.run(debug=True, port=8050)

@@ -1,5 +1,5 @@
 import pandas as pd
-from modules.controllers.formatting_controller import format_symbol_for_yf, format_currency_for_yf
+from modules.controller import format_symbol_for_yf, format_currency_for_yf
 
 
 def load_file(file_path):

@@ -1,3 +1,4 @@
+# CONTROLLER
 
 def format_symbol_for_yf(symbol):
     if symbol.endswith('.UK'):

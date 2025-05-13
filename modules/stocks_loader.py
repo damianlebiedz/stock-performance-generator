@@ -1,27 +1,25 @@
 import pandas as pd
 import yfinance as yf
 from datetime import timedelta
+# from modules.exchange_rates import load_currencies, load_exchange_rates
 
 
-def stock_timeframe(ticker, df):
+def stock_timeframe(positions):
     try:
-        filtered_df = df[df['Formatted Symbol'] == f'{ticker}']
-        start_date = min(filtered_df['Open time'])
-        end_date = max(filtered_df['Close time'])
+        start_date = min(positions['Open time'])
+        end_date = max(positions['Close time'])
         business_days = pd.date_range(start=start_date.date(), end=end_date.date(), freq='B')
         timeframe = pd.DataFrame({'Date': business_days, 'Volume': 0.0, 'Total profit': 0.0,
                                   'Total change [%]': 0.0, 'Purchase value': 0.0, 'Current value': 0.0, 'Mean price': 0.0, 'Mean buy price': 0.0})
-
         return timeframe
 
     except Exception as e:
         print(f"Error in stock_timeframe: {e}")
         return pd.DataFrame()
 
-def load_position(stock_timeframe, position):
+def load_position(timeframe, position):
     try:
-        filtered_timeframe = stock_timeframe[
-            (stock_timeframe['Date'] >= position['Open time']) & (stock_timeframe['Date'] <= position['Close time'])]
+        filtered_timeframe = timeframe[(timeframe['Date'] >= position['Open time']) & (timeframe['Date'] <= position['Close time'])]
 
         for index, row in filtered_timeframe.iloc[1:].iterrows():
             try:
@@ -39,29 +37,28 @@ def load_position(stock_timeframe, position):
                 purchase_value = position['Open price'] * volume
                 sale_value = stock_price * volume
                 profit = sale_value - purchase_value
-                stock_timeframe.loc[index, 'Purchase value'] += purchase_value
-                stock_timeframe.loc[index, 'Total profit'] += profit
-                stock_timeframe.loc[index, 'Current value'] += sale_value
+                timeframe.loc[index, 'Purchase value'] += purchase_value
+                timeframe.loc[index, 'Total profit'] += profit
+                timeframe.loc[index, 'Current value'] += sale_value
 
             except Exception as e:
                 print(f"Error retrieving data for {position['Formatted Symbol']} on {row['Date']}: {e}")
-                stock_timeframe.drop(index, inplace=True)
+                timeframe.drop(index, inplace=True)
                 continue
 
         first_index = filtered_timeframe.iloc[0].name
         purchase_value = position['Open price'] * position['Volume']
 
-        stock_timeframe.loc[first_index, 'Purchase value'] += purchase_value
-        stock_timeframe.loc[first_index, 'Current value'] += purchase_value
+        timeframe.loc[first_index, 'Purchase value'] += purchase_value
+        timeframe.loc[first_index, 'Current value'] += purchase_value
 
     except Exception as e:
         print(f"Error in load_position: {e}")
         return pd.DataFrame()
 
-def stock_history(ticker, df):
+def stock_history(positions):
     try:
-        positions = stock_positions(ticker, df)
-        timeframe = stock_timeframe(ticker, df)
+        timeframe = stock_timeframe(positions)
 
         for _, stock in positions.iterrows():
             timeframe.loc[(timeframe['Date'] >= stock['Open time']) &
@@ -97,12 +94,10 @@ def stock_positions(ticker, df):
 def stock_information(ticker, df):
     information = []
     try:
-        timeframe = stock_history(ticker, df)
         positions = stock_positions(ticker, df)
-        # fast_info = yf.Ticker(ticker).fast_info #uzupełnić potrzebne
-        mean_exchange_ratio = ...
-        information.append({'Fast info': ..., 'Timeframe': timeframe, 'Positions': positions,
-                             'Mean exchange ratio': mean_exchange_ratio})
+        timeframe = stock_history(positions)
+        # fast_info = yf.Ticker(ticker).fast_info
+        information.append({'Timeframe': timeframe, 'Positions': positions})
 
         return information
 

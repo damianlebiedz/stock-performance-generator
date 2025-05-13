@@ -12,7 +12,6 @@ def load_summary_timeframe(all_stocks):
         business_days = pd.date_range(start=start_date.date(), end=end_date.date())
         timeframe = pd.DataFrame({'Date': business_days, 'Total profit': 0.0,
                                   'Total change [%]': 0.0, 'Purchase value': 0.0, 'Current value': 0.0})
-                                    # dodać in PLN (ryzyko walutowe) każdego profitu
 
         return timeframe
 
