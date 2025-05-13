@@ -1,4 +1,4 @@
-# Stock Portfolio Performance
+# Stock Performance Generator
 
 > [!NOTE]
 > This project is still in progress.
