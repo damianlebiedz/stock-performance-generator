@@ -1,4 +1,4 @@
-# Stock portfolio analysis (in progress)
+# Stock performance generator
 
 This project is created to automate the analysis of a stock portfolio based on transaction history.
 
