@@ -16,4 +16,4 @@ def format_currency_for_yf(symbol):
         return 'USD'
     elif symbol.endswith('.FR' or '.DE'):
         return 'EUR'
-    return symbol
+    return 'USD'

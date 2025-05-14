@@ -11,7 +11,10 @@ def load_summary_timeframe(all_stocks):
         )
         business_days = pd.date_range(start=start_date.date(), end=end_date.date())
         timeframe = pd.DataFrame({'Date': business_days, 'Total profit': 0.0,
-                                  'Total change [%]': 0.0, 'Purchase value': 0.0, 'Current value': 0.0})
+                                  'Total change [%]': 0.0, 'Purchase value': 0.0,
+                                  'Current value': 0.0, 'Total profit in PLN': 0.0,
+                                  'Total change [%] in PLN': 0.0, 'Purchase value in PLN': 0.0,
+                                  'Current value in PLN': 0.0})
 
         return timeframe
 
@@ -28,11 +31,17 @@ def load_summary(all_stocks):
             .agg({
                 'Total profit': 'sum',
                 'Purchase value': 'sum',
-                'Current value': 'sum'
+                'Current value': 'sum',
+                'Total profit in PLN': 'sum',
+                'Purchase value in PLN': 'sum',
+                'Current value in PLN': 'sum',
             })
         )
         summary_timeframe['Total change [%]'] = (
                 (summary_timeframe['Current value'] / summary_timeframe['Purchase value'] - 1) * 100).round(2)
+
+        summary_timeframe['Total change [%] in PLN'] = (
+                (summary_timeframe['Current value in PLN'] / summary_timeframe['Purchase value in PLN'] - 1) * 100).round(2)
 
         return summary_timeframe[summary_timeframe['Total profit'] != 0.0]
 

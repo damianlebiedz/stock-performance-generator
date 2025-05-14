@@ -1,5 +1,5 @@
 import pandas as pd
-from modules.controller import format_symbol_for_yf, format_currency_for_yf
+from modules.controller import format_symbol_for_yf
 
 
 def load_file(file_path):
@@ -24,7 +24,6 @@ def merge_df(file_1, file_2): #sprawdzić wyjątki
 def format_df(df):  # sprawdzić wszystkie przypadki złego formatu, zrobić wyjątki
     try:
         df['Formatted Symbol'] = df['Symbol'].apply(format_symbol_for_yf)
-        df['Currency'] = df['Symbol'].apply(format_currency_for_yf)
         df['Open time'] = pd.to_datetime(df['Open time'], dayfirst=True).dt.normalize()
 
         df['Close time'] = pd.to_datetime(df['Close time'], dayfirst=True, errors='coerce').dt.normalize()

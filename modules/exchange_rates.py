@@ -1,22 +1,37 @@
-import pandas as pd
 import yfinance as yf
 from datetime import timedelta
+from modules.controller import format_currency_for_yf
+import time
+from requests.exceptions import SSLError, ConnectionError
 
 
-def load_currencies(df):
-    try:
-        currencies = []
-        for currency in df['Currency'].unique():
-            currencies.append(currency)
-        return currencies
-
-    except Exception as e:
-        print(f"Error in load_currencies: {e}")
-        return pd.DataFrame()
-
-
-def load_exchange_rates(currency, date):
+def load_exchange_rates(symbol, date, retries=3, delay=2):
+    currency = format_currency_for_yf(symbol)
     ticker = f"{currency}PLN=X"
-    data = yf.download(ticker, period="1d", start=date, end=date + timedelta(days=1), auto_adjust=False)
-    exchange_rate = data["Close"].iloc[-1].item() if not data.empty else None
-    return exchange_rate
+
+    for attempt in range(retries):
+        try:
+            data = yf.download(
+                ticker,
+                start=date.strftime('%Y-%m-%d'),
+                end=(date + timedelta(days=1)).strftime('%Y-%m-%d'),
+                auto_adjust=False,
+                progress=False,
+                threads=False,
+            )
+
+            exchange_rate = data['Close'].iloc[0] if isinstance(data['Close'].iloc[0], float) else data['Close'].iloc[
+                0].item()
+
+            return exchange_rate
+
+        except (SSLError, ConnectionError) as e:
+            print(f"Network issue for {ticker} on {date}, attempt {attempt + 1}: {e}")
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                return 0
+
+        except Exception as e:
+            print(f"Other error for {ticker} on {date}: {e}")
+            return 0

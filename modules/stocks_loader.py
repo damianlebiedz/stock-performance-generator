@@ -1,7 +1,7 @@
 import pandas as pd
 import yfinance as yf
 from datetime import timedelta
-# from modules.exchange_rates import load_currencies, load_exchange_rates
+from modules.exchange_rates import load_exchange_rates
 
 
 def stock_timeframe(positions):
@@ -10,47 +10,86 @@ def stock_timeframe(positions):
         end_date = max(positions['Close time'])
         business_days = pd.date_range(start=start_date.date(), end=end_date.date(), freq='B')
         timeframe = pd.DataFrame({'Date': business_days, 'Volume': 0.0, 'Total profit': 0.0,
-                                  'Total change [%]': 0.0, 'Purchase value': 0.0, 'Current value': 0.0, 'Mean price': 0.0, 'Mean buy price': 0.0})
+                                  'Total change [%]': 0.0, 'Purchase value': 0.0, 'Current value': 0.0,
+                                  'Mean price': 0.0, 'Mean buy price': 0.0, 'Exchange rate': 0.0,
+                                  'Total profit in PLN': 0.0, 'Purchase value in PLN': 0.0,
+                                  'Current value in PLN': 0.0, 'Mean price in PLN': 0.0,
+                                  'Mean buy price in PLN': 0.0, 'Total change [%] in PLN': 0.0})
         return timeframe
 
     except Exception as e:
         print(f"Error in stock_timeframe: {e}")
         return pd.DataFrame()
 
+exchange_rate_for_purchase_value = {}
+
 def load_position(timeframe, position):
+    global exchange_rate_for_purchase_value
     try:
-        filtered_timeframe = timeframe[(timeframe['Date'] >= position['Open time']) & (timeframe['Date'] <= position['Close time'])]
+        filtered_timeframe = timeframe[
+            (timeframe['Date'] >= position['Open time']) &
+            (timeframe['Date'] <= position['Close time'])
+        ]
 
-        for index, row in filtered_timeframe.iloc[1:].iterrows():
-            try:
-                date = row['Date']
-                data = yf.download(position['Formatted Symbol'], start=date.strftime('%Y-%m-%d'),
-                                   end=(date + timedelta(days=1)).strftime('%Y-%m-%d'), auto_adjust=False)
-                stock_price = data['Close'].iloc[0] if isinstance(data['Close'].iloc[0], float) else data['Close'].iloc[
-                    0].item()
-
-                # exchange_rate = load_exchange_rates(stock['Currency'], date)
-                # if isinstance(exchange_rate, pd.Series):
-                #     exchange_rate = exchange_rate.iloc[0]
-
-                volume = position['Volume']
-                purchase_value = position['Open price'] * volume
-                sale_value = stock_price * volume
-                profit = sale_value - purchase_value
-                timeframe.loc[index, 'Purchase value'] += purchase_value
-                timeframe.loc[index, 'Total profit'] += profit
-                timeframe.loc[index, 'Current value'] += sale_value
-
-            except Exception as e:
-                print(f"Error retrieving data for {position['Formatted Symbol']} on {row['Date']}: {e}")
-                timeframe.drop(index, inplace=True)
-                continue
+        if filtered_timeframe.empty:
+            print(f"No matching dates for position {position['Formatted Symbol']}")
+            return timeframe
 
         first_index = filtered_timeframe.iloc[0].name
-        purchase_value = position['Open price'] * position['Volume']
+        last_index = filtered_timeframe.iloc[-1].name
 
-        timeframe.loc[first_index, 'Purchase value'] += purchase_value
-        timeframe.loc[first_index, 'Current value'] += purchase_value
+        volume = position['Volume']
+        open_price = position['Open price']
+        close_price = position['Close price']
+        ticker = position['Formatted Symbol']
+
+        for index, row in filtered_timeframe.iterrows():
+            date = row['Date']
+            exchange_rate = load_exchange_rates(ticker, date)
+            purchase_value = open_price * volume
+
+            if index == first_index:
+                exchange_rate_for_purchase_value = load_exchange_rates(ticker, date)
+                sale_value = purchase_value
+                profit = 0
+
+            elif index == last_index and not pd.isna(close_price):
+                sale_value = close_price * volume
+                profit = sale_value - purchase_value
+
+            else:
+                try:
+                    data = yf.download(
+                        ticker,
+                        start=date.strftime('%Y-%m-%d'),
+                        end=(date + timedelta(days=1)).strftime('%Y-%m-%d'),
+                        auto_adjust=False,
+                        progress=False
+                    )
+                    stock_price = data['Close'].iloc[0] if isinstance(data['Close'].iloc[0], float) else data['Close'].iloc[0].item()
+
+                    sale_value = stock_price * volume
+                    profit = sale_value - purchase_value
+
+                except Exception as e:
+                    print(f"Error retrieving data for {ticker} on {date}: {e}")
+                    timeframe.drop(index, inplace=True)
+                    continue
+
+            purchase_value_in_pln = purchase_value * exchange_rate_for_purchase_value
+            sale_value_in_pln = sale_value * exchange_rate
+            profit_in_pln = sale_value_in_pln - purchase_value_in_pln
+
+            timeframe.loc[index, 'Purchase value'] += purchase_value
+            timeframe.loc[index, 'Current value'] += sale_value
+            timeframe.loc[index, 'Total profit'] += profit
+
+            if timeframe.loc[index, 'Exchange rate'] == 0:
+                timeframe.loc[index, 'Exchange rate'] = exchange_rate
+
+            timeframe.loc[index, 'Purchase value in PLN'] += purchase_value_in_pln
+            timeframe.loc[index, 'Current value in PLN'] += sale_value_in_pln
+            timeframe.loc[index, 'Total profit in PLN'] += profit_in_pln
 
     except Exception as e:
         print(f"Error in load_position: {e}")
@@ -67,9 +106,13 @@ def stock_history(positions):
 
         timeframe['Mean price'] = timeframe['Current value'] / timeframe['Volume']
         timeframe['Mean buy price'] = timeframe['Purchase value'] / timeframe['Volume']
-
         timeframe['Total change [%]'] = (
                 (timeframe['Mean price'] / timeframe['Mean buy price'] - 1) * 100).round(2)
+
+        timeframe['Mean price in PLN'] = timeframe['Current value in PLN'] / timeframe['Volume']
+        timeframe['Mean buy price in PLN'] = timeframe['Purchase value in PLN'] / timeframe['Volume']
+        timeframe['Total change [%] in PLN'] = (
+                (timeframe['Mean price in PLN'] / timeframe['Mean buy price in PLN'] - 1) * 100).round(2)
 
         return timeframe
 
