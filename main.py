@@ -2,7 +2,7 @@ import pandas as pd
 from modules.data_loader import load_file, merge_df, format_df
 from modules.stocks_loader import all_stocks_information
 from modules.summary_loader import load_summary
-from modules.plot_generator import stock_plot, summary_plot
+from modules.generate_raport import save_combined_report
 
 
 if __name__ == "__main__":
@@ -20,5 +20,4 @@ if __name__ == "__main__":
     all_stocks = all_stocks_information(unique_tickers, df)
     summary = load_summary(all_stocks)
 
-    stock_plot(all_stocks)
-    summary_plot(summary)
+    save_combined_report(summary, all_stocks)

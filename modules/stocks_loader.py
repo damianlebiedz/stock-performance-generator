@@ -147,7 +147,6 @@ def stock_information(ticker, df):
     try:
         positions = stock_positions(ticker, df)
         timeframe = stock_history(positions)
-        # fast_info = yf.Ticker(ticker).fast_info
         information.append({'Timeframe': timeframe, 'Positions': positions})
 
         return information
