@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Follow this information to run the program! Prepare your data to avoid generator failure.
+
 About `.csv` files:
 
 - They should be formatted like the files in the `/template` folder to run the generator.
