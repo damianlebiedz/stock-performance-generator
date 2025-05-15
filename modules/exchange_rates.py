@@ -9,7 +9,8 @@ import logging
 logging.basicConfig(
     filename='output/errors.log',
     level=logging.ERROR,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filemode='w'
 )
 
 def load_exchange_rates(symbol, date, retries=3, delay=2):

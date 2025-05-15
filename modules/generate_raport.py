@@ -24,7 +24,7 @@ def save_combined_report(summary, all_stocks, filename="output/portfolio_report.
             </style>
         </head>
         <body>
-            <h1>Raport z analizy portfela</h1>
+            <h1>Portfolio Report</h1>
 
             <div class="plot-container">
                 {summary_html}
