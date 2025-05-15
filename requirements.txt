@@ -1,6 +1,5 @@
-pandas
-yfinance
-matplotlib
-dash
-plotly
-dash_bootstrap_components
+pandas~=2.2.3
+yfinance~=0.2.61
+plotly~=6.0.1
+requests~=2.32.3
+tqdm~=4.67.1
