@@ -30,19 +30,18 @@ The `data/OPEN POSITIONS.csv` file should look like this:
 1. Downloads data from the transaction history sheets and prepares it for analysis.
 2. Creates a dataframes with the historical daily and total change of each asset in the portfolio composition.
 3. Creates a dataframe with the historical daily and total change of the entire portfolio.
-4. Visualizes data on charts.
+4. Visualizes total change and total change in PLN on charts.
+5. Generates html raport with the interactive charts.
 
 ### Future features:
 
 - Compares portfolio performance with the overall market.
-- Adds currency risk and checks the impact of potential currency hedging on the result.
-- Generates html raport with the interactive charts.
 
 ## Technologies
 - Python 3
 - pandas
 - yfinance
-- matplotlib
+- plotly
 
 ## Contact
 Damian Lebiedź | https://damianlebiedz.github.io/contact.html
