@@ -2,7 +2,15 @@ import pandas as pd
 import yfinance as yf
 from datetime import timedelta
 from modules.exchange_rates import load_exchange_rates
+import logging
+from tqdm import tqdm
 
+
+logging.basicConfig(
+    filename='output/errors.log',
+    level=logging.ERROR,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 def stock_timeframe(positions):
     try:
@@ -72,7 +80,7 @@ def load_position(timeframe, position):
                     profit = sale_value - purchase_value
 
                 except Exception as e:
-                    print(f"Error retrieving data for {ticker} on {date}: {e}")
+                    logging.error(f"Error retrieving data for {ticker} on {date}: {e}")
                     timeframe.drop(index, inplace=True)
                     continue
 
@@ -152,7 +160,7 @@ def stock_information(ticker, df):
 def all_stocks_information(unique_tickers, df):
     try:
         stocks = []
-        for ticker in unique_tickers:
+        for ticker in tqdm(unique_tickers, desc='Loading stocks', total=len(unique_tickers)):
             try:
                 informations = stock_information(ticker, df)
                 stocks.append({'Ticker': ticker, 'Informations': informations})

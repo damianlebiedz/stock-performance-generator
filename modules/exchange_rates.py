@@ -3,7 +3,14 @@ from datetime import timedelta
 from modules.controller import format_currency_for_yf
 import time
 from requests.exceptions import SSLError, ConnectionError
+import logging
 
+
+logging.basicConfig(
+    filename='output/errors.log',
+    level=logging.ERROR,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 def load_exchange_rates(symbol, date, retries=3, delay=2):
     currency = format_currency_for_yf(symbol)
@@ -26,12 +33,12 @@ def load_exchange_rates(symbol, date, retries=3, delay=2):
             return exchange_rate
 
         except (SSLError, ConnectionError) as e:
-            print(f"Network issue for {ticker} on {date}, attempt {attempt + 1}: {e}")
+            logging.error(f"Network issue for {ticker} on {date}, attempt {attempt + 1}: {e}")
             if attempt < retries - 1:
                 time.sleep(delay)
             else:
                 return 0
 
         except Exception as e:
-            print(f"Other error for {ticker} on {date}: {e}")
+            logging.error(f"Other error for {ticker} on {date}: {e}")
             return 0
