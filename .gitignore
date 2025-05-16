@@ -3,6 +3,7 @@ data/OPEN POSITIONS.csv
 
 *.ipynb
 *.html
+*.xlsx
 errors.log
 
 .idea
