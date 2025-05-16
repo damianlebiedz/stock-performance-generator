@@ -1,10 +1,15 @@
+import pandas as pd
 import plotly.io as pio
 import os
+from datetime import datetime
 from modules.plot_generator import stock_plot, summary_plot
 
 
-def save_combined_report(summary, all_stocks, filename="output/portfolio_report.html"):
+def save_combined_report(summary, all_stocks):
     os.makedirs("output", exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    filename = f"output/portfolio_report_{timestamp}"
 
     stock_fig = stock_plot(all_stocks)
     summary_fig = summary_plot(summary)
@@ -37,7 +42,15 @@ def save_combined_report(summary, all_stocks, filename="output/portfolio_report.
     </html>
     """
 
-    with open(filename, "w", encoding="utf-8") as f:
+    with open(filename+".html", "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"Raport zapisany jako: {filename}")
+    with pd.ExcelWriter(filename+".xlsx") as writer:
+        summary.to_excel(writer, sheet_name='Summary', index=False)
+        for idx, stock in enumerate(all_stocks):
+            ticker = stock['Ticker']
+            for info in stock['Informations']:
+                timeframe = info['Timeframe']
+                timeframe.to_excel(writer, sheet_name=f'{ticker}', index=False)
+
+    print(f"Report saved as: {filename}")
