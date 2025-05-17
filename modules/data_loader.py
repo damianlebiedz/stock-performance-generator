@@ -21,8 +21,8 @@ def load_report_from_xlsx():
     cleaned_open_positions = clean_csv_file(open_positions, 9)
     cleaned_closed_positions = clean_csv_file(closed_positions, 11)
 
-    cleaned_open_positions.to_csv(os.path.join("output", "open_positions.csv"), index=False)
-    cleaned_closed_positions.to_csv(os.path.join("output", "closed_position.csv"), index=False)
+    cleaned_open_positions.to_csv(os.path.join("output", "OPEN POSITIONS.csv"), index=False)
+    cleaned_closed_positions.to_csv(os.path.join("output", "CLOSED POSITIONS.csv"), index=False)
 
 
 def clean_csv_file(input_path, skiprows):
