@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-
+from modules.controller import comparison_ticker
 
 def stock_plot(all_stocks):
     try:
@@ -68,15 +68,11 @@ def stock_plot(all_stocks):
         return fig
 
     except Exception as e:
-        print(f"Error in stock_plot_plotly: {e}")
+        print(f"Error in stock_plot: {e}")
 
 
 def summary_plot(summary):
     try:
-        if 'Total change [%]' not in summary.columns or 'Total change [%] in PLN' not in summary.columns:
-            print("Warning: missing columns in summary data")
-            return
-
         fig = go.Figure()
 
         fig.add_trace(go.Scatter(
@@ -95,6 +91,14 @@ def summary_plot(summary):
             line=dict(color='green')
         ))
 
+        fig.add_trace(go.Scatter(
+            x=summary['Date'],
+            y=summary[f'Total change [%] of {comparison_ticker}'],
+            mode='lines',
+            name=f'Portfolio Total change [%] of {comparison_ticker}',
+            line=dict(color='grey')
+        ))
+
         fig.update_layout(
             title='Portfolio',
             xaxis_title='Date',
@@ -110,4 +114,4 @@ def summary_plot(summary):
         return fig
 
     except Exception as e:
-        print(f"Error in summary_plot_plotly: {e}")
+        print(f"Error in summary_plot: {e}")
