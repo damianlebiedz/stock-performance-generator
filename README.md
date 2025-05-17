@@ -32,10 +32,12 @@ The `data/OPEN POSITIONS.csv` file should look like this:
 3. Creates a dataframe with the historical daily and total change of the entire portfolio.
 4. Visualizes total change and total change in PLN on charts.
 5. Generates html raport with the interactive charts.
+6. Compares portfolio performance with the overall market.
 
 ### Future features:
 
-- Compares portfolio performance with the overall market.
+- Add the feature to read data directly from an xlsx file.
+- Optimalize for computational complexity.
 
 ## Technologies
 - Python 3
