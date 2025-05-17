@@ -1,26 +1,7 @@
 import pandas as pd
 
-
-def load_summary_timeframe(all_stocks):
-    try:
-        start_date = min(
-            info['Timeframe']['Date'].min() for stock in all_stocks for info in stock['Informations']
-        )
-        end_date = max(
-            info['Timeframe']['Date'].max() for stock in all_stocks for info in stock['Informations']
-        )
-        business_days = pd.date_range(start=start_date.date(), end=end_date.date())
-        timeframe = pd.DataFrame({'Date': business_days, 'Total profit': 0.0,
-                                  'Total change [%]': 0.0, 'Purchase value': 0.0,
-                                  'Current value': 0.0, 'Total profit in PLN': 0.0,
-                                  'Total change [%] in PLN': 0.0, 'Purchase value in PLN': 0.0,
-                                  'Current value in PLN': 0.0})
-
-        return timeframe
-
-    except Exception as e:
-        print(f"Error in summary_timeframe: {e}")
-        return pd.DataFrame()
+from modules.controller import comparison_ticker
+from modules.load_comparison_data import load_comparison_asset
 
 
 def load_summary(all_stocks):
@@ -43,7 +24,12 @@ def load_summary(all_stocks):
         summary_timeframe['Total change [%] in PLN'] = (
                 (summary_timeframe['Current value in PLN'] / summary_timeframe['Purchase value in PLN'] - 1) * 100).round(2)
 
-        return summary_timeframe[summary_timeframe['Total profit'] != 0.0]
+        cleaned_summary = summary_timeframe[summary_timeframe['Total profit'] != 0.0]
+
+        cleaned_summary[f'Total change [%] of {comparison_ticker}'] = None
+        load_comparison_asset(comparison_ticker, cleaned_summary)
+
+        return cleaned_summary
 
     except Exception as e:
         print(f"Error: {e}")
