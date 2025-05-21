@@ -2,7 +2,7 @@
 
 # If you are using a history of transactions from XStation5 platform from XTB broker, set True
 # Otherwise you should format your history of transactions as indicated in data/README.md file, then set False
-XStation5 = True
+XStation5 = False
 
 # TO DO
 comparison_ticker = "^SPX"

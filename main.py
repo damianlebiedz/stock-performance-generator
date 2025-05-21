@@ -11,6 +11,7 @@ if __name__ == "__main__":
     # pd.set_option('display.max_columns', None)
     # pd.set_option('display.max_rows', None)
 
+    ### TO DO
     if XStation5 is True:
         load_report_from_xlsx()
 
@@ -20,15 +21,15 @@ if __name__ == "__main__":
     else:
         raise Exception("Set XStation5 flag in modules/controller.py file.")
 
-    # closed_positions = load_file("data/CLOSED POSITIONS.csv")
-    # open_positions = load_file("data/OPEN POSITIONS.csv")
-    #
-    # df = merge_df(closed_positions, open_positions)
-    # format_df(df)
-    #
-    # unique_tickers = df['Formatted Symbol'].unique()
-    #
-    # all_stocks = all_stocks_information(unique_tickers, df)
-    # summary = load_summary(all_stocks)
-    #
-    # save_combined_report(summary, all_stocks)
+    closed_positions = load_file("data/CLOSED POSITIONS.csv")
+    open_positions = load_file("data/OPEN POSITIONS.csv")
+
+    df = merge_df(closed_positions, open_positions)
+    format_df(df)
+
+    unique_tickers = df['Formatted Symbol'].unique()
+
+    all_stocks = all_stocks_information(unique_tickers, df)
+    summary = load_summary(all_stocks)
+
+    save_combined_report(summary, all_stocks)
