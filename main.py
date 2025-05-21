@@ -1,13 +1,25 @@
-import pandas as pd
-from modules.data_loader import load_file, merge_df, format_df
+# import pandas as pd
+
+from modules.data_loader import load_file, merge_df, format_df, load_report_from_xlsx
 from modules.stocks_loader import all_stocks_information
 from modules.summary_loader import load_summary
 from modules.generate_raport import save_combined_report
+from modules.controller import XStation5
 
 
 if __name__ == "__main__":
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.max_rows', None)
+    # pd.set_option('display.max_columns', None)
+    # pd.set_option('display.max_rows', None)
+
+    ### TO DO
+    if XStation5 is True:
+        load_report_from_xlsx()
+
+    elif XStation5 is False:
+        closed_positions = load_file("data/CLOSED POSITIONS.csv")
+        open_positions = load_file("data/OPEN POSITIONS.csv")
+    else:
+        raise Exception("Set XStation5 flag in modules/controller.py file.")
 
     closed_positions = load_file("data/CLOSED POSITIONS.csv")
     open_positions = load_file("data/OPEN POSITIONS.csv")

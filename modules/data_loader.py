@@ -1,5 +1,39 @@
 import pandas as pd
+import tkinter as tk
+from tkinter import filedialog
+import os
+
 from modules.controller import format_symbol_for_yf
+
+
+###TO DO
+def load_report_from_xlsx():
+    root = tk.Tk()
+    root.withdraw()
+    file = filedialog.askopenfilename(
+        title="Choose history of transactions file",
+        filetypes=[("Excel files", "*.xlsx *.xls")]
+    )
+    sheets = pd.Series(pd.ExcelFile(file, engine="openpyxl").sheet_names)
+    matching_sheet_for_open = sheets[sheets.str.contains("OPEN POSITION")].iloc[0]
+    open_positions = pd.read_excel(file, sheet_name=matching_sheet_for_open, engine="openpyxl")
+    closed_positions = pd.read_excel(file, sheet_name="CLOSED POSITION HISTORY", engine='openpyxl')
+
+    cleaned_open_positions = clean_csv_file(open_positions, 9)
+    cleaned_closed_positions = clean_csv_file(closed_positions, 11)
+
+    cleaned_open_positions.to_csv(os.path.join("output", "OPEN POSITIONS.csv"), index=False)
+    cleaned_closed_positions.to_csv(os.path.join("output", "CLOSED POSITIONS.csv"), index=False)
+
+
+def clean_csv_file(input_path, skiprows):
+    cleaned_csv = input_path.iloc[skiprows:].reset_index(drop=True)
+    cleaned_csv.iloc[:, 0] = cleaned_csv.iloc[:, 0].astype(str)
+    first_col_split = cleaned_csv.iloc[:, 0].str.split(',', expand=True)
+    cleaned_csv = cleaned_csv.drop(cleaned_csv.columns[0], axis=1)
+    pd.concat([first_col_split, cleaned_csv], axis=1)
+
+    return cleaned_csv
 
 
 def load_file(file_path):
