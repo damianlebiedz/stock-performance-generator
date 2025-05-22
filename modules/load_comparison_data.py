@@ -1,7 +1,6 @@
 import yfinance as yf
 import logging
 from datetime import timedelta
-
 from modules.controller import comparison_ticker
 
 purchase_value = {}
