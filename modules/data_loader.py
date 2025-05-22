@@ -1,8 +1,7 @@
 import pandas as pd
 import tkinter as tk
-from tkinter import filedialog
 import os
-
+from tkinter import filedialog
 from modules.controller import format_symbol_for_yf
 
 
@@ -25,9 +24,11 @@ def load_report_from_xlsx():
     cleaned_open_positions.to_csv(os.path.join("output", "OPEN POSITIONS.csv"), index=False)
     cleaned_closed_positions.to_csv(os.path.join("output", "CLOSED POSITIONS.csv"), index=False)
 
+    return cleaned_closed_positions, cleaned_open_positions
 
-def clean_csv_file(input_path, skiprows):
-    cleaned_csv = input_path.iloc[skiprows:].reset_index(drop=True)
+### TO DO
+def clean_csv_file(input_path, skip_rows):
+    cleaned_csv = input_path.iloc[skip_rows:].reset_index(drop=True)
     cleaned_csv.iloc[:, 0] = cleaned_csv.iloc[:, 0].astype(str)
     first_col_split = cleaned_csv.iloc[:, 0].str.split(',', expand=True)
     cleaned_csv = cleaned_csv.drop(cleaned_csv.columns[0], axis=1)
@@ -46,7 +47,7 @@ def load_file(file_path):
         return pd.DataFrame()
 
 
-def merge_df(file_1, file_2): #sprawdzić wyjątki
+def merge_df(file_1, file_2):
     try:
         df = pd.concat([file_1, file_2], ignore_index=True)
         return df
@@ -55,13 +56,16 @@ def merge_df(file_1, file_2): #sprawdzić wyjątki
         return pd.DataFrame()
 
 
-def format_df(df):  # sprawdzić wszystkie przypadki złego formatu, zrobić wyjątki
+def format_df(df):
     try:
         df['Formatted Symbol'] = df['Symbol'].apply(format_symbol_for_yf)
         df['Open time'] = pd.to_datetime(df['Open time'], dayfirst=True).dt.normalize()
 
         df['Close time'] = pd.to_datetime(df['Close time'], dayfirst=True, errors='coerce').dt.normalize()
         df['Close time'].fillna(pd.Timestamp.now().normalize(), inplace=True)
+
+        for col in ['Open price', 'Close price', 'Purchase value', 'Sale value']:
+            df[col] = df[col].str.replace(',', '.', regex=False).astype(float)
 
     except Exception as e:
         print(f"Error in format_df: {e}")

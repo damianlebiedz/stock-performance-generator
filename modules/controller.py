@@ -4,7 +4,7 @@
 # Otherwise you should format your history of transactions as indicated in data/README.md file, then set False
 XStation5 = False
 
-# TO DO
+# Asset with which we compare the portfolio performance
 comparison_ticker = "^SPX"
 
 def format_symbol_for_yf(symbol):
