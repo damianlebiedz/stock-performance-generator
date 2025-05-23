@@ -1,5 +1,8 @@
 # CONTROLLER
 
+# Asset with which we compare the portfolio performance
+comparison_ticker = "^SPX"
+
 def format_symbol_for_yf(symbol):
     if symbol.endswith('.UK'):
         return symbol[:-3] + '.L'

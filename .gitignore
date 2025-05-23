@@ -1,8 +1,7 @@
-data/CLOSED POSITIONS.csv
-data/OPEN POSITIONS.csv
-
 *.ipynb
 *.html
+*.xlsx
+*.csv
 errors.log
 
 .idea
