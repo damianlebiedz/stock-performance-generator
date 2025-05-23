@@ -1,4 +1,3 @@
-import pandas as pd
 from modules.data_loader import load_file, merge_df, format_df, load_report_from_xlsx
 from modules.generate_raport import save_combined_report
 from modules.controller import comparison_ticker
@@ -7,9 +6,6 @@ from modules.summary_loader import load_and_format_positions
 
 
 if __name__ == "__main__":
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.max_rows', None)
-
     while True:
         print('Are you using XStation5 report? (Y/n):')
         x = input()
