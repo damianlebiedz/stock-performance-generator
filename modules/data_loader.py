@@ -5,7 +5,6 @@ from tkinter import filedialog
 from modules.controller import format_symbol_for_yf
 
 
-###TO DO
 def load_report_from_xlsx():
     root = tk.Tk()
     root.withdraw()
@@ -18,23 +17,23 @@ def load_report_from_xlsx():
     open_positions = pd.read_excel(file, sheet_name=matching_sheet_for_open, engine="openpyxl")
     closed_positions = pd.read_excel(file, sheet_name="CLOSED POSITION HISTORY", engine='openpyxl')
 
-    cleaned_open_positions = clean_csv_file(open_positions, 9)
-    cleaned_closed_positions = clean_csv_file(closed_positions, 11)
+    cleaned_open_positions = open_positions.iloc[10:].reset_index(drop=True)
+    cleaned_closed_positions = closed_positions.iloc[12:].reset_index(drop=True)
 
-    cleaned_open_positions.to_csv(os.path.join("output", "OPEN POSITIONS.csv"), index=False)
-    cleaned_closed_positions.to_csv(os.path.join("output", "CLOSED POSITIONS.csv"), index=False)
+    cleaned_open_positions = cleaned_open_positions.iloc[:-1, list(range(2, 7)) + [8]]
+    cleaned_closed_positions = cleaned_closed_positions.iloc[:-1, list(range(2, 9)) + [11, 12]]
+
+    cleaned_closed_positions.columns = ["Symbol", "Type", "Volume", "Open time", "Open price", "Close time",
+                                        "Close price", "Purchase value", "Sale value"]
+    cleaned_open_positions.columns = ["Symbol", "Type", "Volume", "Open time", "Open price", "Purchase value"]
+
+    cleaned_open_positions = cleaned_open_positions.dropna()
+    cleaned_closed_positions = cleaned_closed_positions.dropna()
+
+    cleaned_open_positions.to_csv(os.path.join("data", "OPEN POSITIONS from XTB.csv"), index=False)
+    cleaned_closed_positions.to_csv(os.path.join("data", "CLOSED POSITIONS from XTB.csv"), index=False)
 
     return cleaned_closed_positions, cleaned_open_positions
-
-### TO DO
-def clean_csv_file(input_path, skip_rows):
-    cleaned_csv = input_path.iloc[skip_rows:].reset_index(drop=True)
-    cleaned_csv.iloc[:, 0] = cleaned_csv.iloc[:, 0].astype(str)
-    first_col_split = cleaned_csv.iloc[:, 0].str.split(',', expand=True)
-    cleaned_csv = cleaned_csv.drop(cleaned_csv.columns[0], axis=1)
-    pd.concat([first_col_split, cleaned_csv], axis=1)
-
-    return cleaned_csv
 
 
 def load_file(file_path):
@@ -62,10 +61,11 @@ def format_df(df):
         df['Open time'] = pd.to_datetime(df['Open time'], dayfirst=True).dt.normalize()
 
         df['Close time'] = pd.to_datetime(df['Close time'], dayfirst=True, errors='coerce').dt.normalize()
-        df['Close time'].fillna(pd.Timestamp.now().normalize(), inplace=True)
+        df['Close time'] = df['Close time'].fillna(pd.Timestamp.now().normalize())
 
         for col in ['Open price', 'Close price', 'Purchase value', 'Sale value']:
-            df[col] = df[col].str.replace(',', '.', regex=False).astype(float)
+            df[col] = df[col].apply(lambda x: str(x).replace(',', '.') if pd.notnull(x) else x)
+            df[col] = df[col].astype(float)
 
     except Exception as e:
         print(f"Error in format_df: {e}")
