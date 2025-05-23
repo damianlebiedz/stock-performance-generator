@@ -11,12 +11,12 @@ if __name__ == "__main__":
     pd.set_option('display.max_rows', None)
 
     while True:
-        print('Are you using XStation5 report? (Y/n): ')
+        print('Are you using XStation5 report? (Y/n):')
         x = input()
-        if x == 'Y' or x == 'y':
+        if x.lower() == 'y':
             open_positions, closed_positions = load_report_from_xlsx()
             break
-        elif x == 'N' or x == 'n':
+        elif x.lower() == 'n':
             closed_positions = load_file("data/CLOSED POSITIONS.csv")
             open_positions = load_file("data/OPEN POSITIONS.csv")
             break
