@@ -136,3 +136,4 @@ def load_and_format_positions(positions):
 
     except Exception as e:
         print(f"Error in stock_history: {e}")
+        return pd.DataFrame()
