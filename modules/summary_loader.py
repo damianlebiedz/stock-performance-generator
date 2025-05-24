@@ -1,9 +1,17 @@
 import pandas as pd
-from modules.exchange_rates import load_exchange_rates
 import logging
 import yfinance as yf
 from datetime import timedelta
 from tqdm import tqdm
+from modules.controller import format_currency_for_yf
+
+
+logging.basicConfig(
+    filename='output/errors.log',
+    level=logging.ERROR,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filemode='w'
+)
 
 
 def summary_timeframe_loader(df):
@@ -19,6 +27,33 @@ def summary_timeframe_loader(df):
     except Exception as e:
         print(f"Error in stock_timeframe: {e}")
         return pd.DataFrame()
+
+
+def download_price(ticker, date):
+    data = yf.download(
+        ticker,
+        start=date.strftime('%Y-%m-%d'),
+        end=(date + timedelta(days=1)).strftime('%Y-%m-%d'),
+        auto_adjust=False,
+        progress=False
+    )
+    stock_price = data['Close'].iloc[0] if isinstance(data['Close'].iloc[0], float) else data['Close'].iloc[
+        0].item()
+
+    return stock_price
+
+
+def load_exchange_rates(symbol, date):
+    try:
+        currency = format_currency_for_yf(symbol)
+        ticker = f"{currency}PLN=X"
+        exchange_rate = download_price(ticker, date)
+
+        return exchange_rate
+
+    except Exception as e:
+        logging.error(f"Error retrieving data for {symbol} on {date}: {e}")
+        return 0
 
 
 volume = 0
@@ -61,16 +96,7 @@ def load_single_position(timeframe, position):
 
             else:
                 try:
-                    data = yf.download(
-                        ticker,
-                        start=date.strftime('%Y-%m-%d'),
-                        end=(date + timedelta(days=1)).strftime('%Y-%m-%d'),
-                        auto_adjust=False,
-                        progress=False
-                    )
-                    stock_price = data['Close'].iloc[0] if isinstance(data['Close'].iloc[0], float) else \
-                    data['Close'].iloc[0].item()
-
+                    stock_price = download_price(ticker, date)
                     sale_value = stock_price * volume
 
                 except Exception as e:
