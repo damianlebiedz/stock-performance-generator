@@ -15,8 +15,6 @@ def format_symbol_for_yf(symbol):
 def format_currency_for_yf(symbol):
     if symbol.endswith('.UK'):
         return 'GBP'
-    elif symbol.endswith('.US'):
-        return 'USD'
     elif symbol.endswith('.FR' or '.DE'):
         return 'EUR'
     return 'USD'
