@@ -1,6 +1,7 @@
 import pandas as pd
 import tkinter as tk
 import os
+import sys
 from tkinter import filedialog
 from modules.controller import format_symbol_for_yf
 
@@ -12,6 +13,10 @@ def load_report_from_xlsx():
         title="Choose history of transactions file",
         filetypes=[("Excel files", "*.xlsx *.xls")]
     )
+
+    if not file:
+        sys.exit(0)
+
     sheets = pd.Series(pd.ExcelFile(file, engine="openpyxl").sheet_names)
     matching_sheet_for_open = sheets[sheets.str.contains("OPEN POSITION")].iloc[0]
     open_positions = pd.read_excel(file, sheet_name=matching_sheet_for_open, engine="openpyxl")
