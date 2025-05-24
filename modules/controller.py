@@ -10,6 +10,8 @@ def format_symbol_for_yf(symbol):
         return symbol[:-3]
     elif symbol.endswith('.FR'):
         return symbol[:-3] + '.PA'
+    elif symbol is 'SJPA.UK':
+        return 'SJPA.MI'
     return symbol
 
 def format_currency_for_yf(symbol):
