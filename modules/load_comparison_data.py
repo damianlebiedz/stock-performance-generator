@@ -17,7 +17,6 @@ def load_comparison_asset(ticker, summary):
             summary.loc[index, f'Total change [%] of {comparison_ticker}'] = (
                     (stock_price / purchase_value - 1) * 100)
 
-
         except Exception as e:
             logging.error(f"Error retrieving data for {ticker} on {date}: {e}")
             summary.loc[index, f'Total change [%] of {comparison_ticker}'] = None

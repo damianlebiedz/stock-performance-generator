@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 from modules.controller import comparison_ticker
+from modules.controller import currency_of_portfolio
 
 
 def summary_plot(summary):
@@ -10,17 +11,9 @@ def summary_plot(summary):
 
         fig.add_trace(go.Scatter(
             x=summary['Date'],
-            y=summary['Total change [%]'],
+            y=summary[f'Total change [%] in {currency_of_portfolio}'],
             mode='lines',
-            name='Total change [%] of portfolio',
-            line=dict(color='black')
-        ))
-
-        fig.add_trace(go.Scatter(
-            x=summary['Date'],
-            y=summary['Total change [%] in PLN'],
-            mode='lines',
-            name='Total change [%] in PLN of portfolio',
+            name=f'Total change [%] in {currency_of_portfolio} of portfolio',
             line=dict(color='green')
         ))
 

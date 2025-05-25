@@ -1,9 +1,10 @@
 import pandas as pd
 import logging
 import yfinance as yf
-from datetime import timedelta
+import os
+from datetime import timedelta, datetime
 from tqdm import tqdm
-from modules.controller import format_currency_for_yf
+from modules.controller import currency_of_portfolio
 
 
 logging.basicConfig(
@@ -19,9 +20,10 @@ def summary_timeframe_loader(df):
         start_date = min(df['Open time'])
         end_date = max(df['Close time'])
         business_days = pd.date_range(start=start_date.date(), end=end_date.date(), freq='B')
-        timeframe = pd.DataFrame({'Date': business_days, 'Total change [%]': 0.0, 'Total change [%] in PLN': 0.0,
-                                  'Purchase value': 0.0, 'Purchase value in PLN': 0.0, 'Current value': 0.0,
-                                  'Current value in PLN': 0.0})
+        timeframe = pd.DataFrame({'Date': business_days,
+                                  f'Total change [%] in {currency_of_portfolio}': 0.0,
+                                  f'Purchase value in {currency_of_portfolio}': 0.0,
+                                  f'Current value in {currency_of_portfolio}': 0.0})
         return timeframe
 
     except Exception as e:
@@ -41,19 +43,6 @@ def download_price(ticker, date):
         0].item()
 
     return stock_price
-
-
-def load_exchange_rates(symbol, date):
-    try:
-        currency = format_currency_for_yf(symbol)
-        ticker = f"{currency}PLN=X"
-        exchange_rate = download_price(ticker, date)
-
-        return exchange_rate
-
-    except Exception as e:
-        logging.error(f"Error retrieving data for {symbol} on {date}: {e}")
-        return 0
 
 
 volume = 0
@@ -82,13 +71,35 @@ def load_single_position(timeframe, position):
         close_price = position['Close price']
         ticker = position['Formatted Symbol']
 
+        try:
+            symbol = yf.Ticker(ticker)
+            currency = symbol.info.get('currency')
+            exchange_rate_ticker = f"{currency}{currency_of_portfolio}=X"
+        except Exception as e:
+            logging.error(f"Error during yt.Ticker({ticker}): {e}")
+            raise
+
         for index, row in filtered_timeframe.iterrows():
             date = row['Date']
-            exchange_rate = load_exchange_rates(ticker, date)
+
+            if currency == currency_of_portfolio:
+                exchange_rate = 1
+            else:
+                try:
+                    exchange_rate = download_price(exchange_rate_ticker, date)
+                except Exception as e:
+                    logging.error(f"Error retrieving data for {exchange_rate_ticker} on {date}: {e}")
+                    timeframe.drop(index, inplace=True)
+                    continue
+
             purchase_value = open_price * volume
 
             if index == first_index:
-                exchange_rate_for_purchase_value = load_exchange_rates(ticker, date)
+                if currency == currency_of_portfolio:
+                    exchange_rate_for_purchase_value = 1
+                else:
+                    exchange_rate_for_purchase_value = exchange_rate
+
                 sale_value = purchase_value
 
             elif index == last_index and not pd.isna(close_price):
@@ -96,7 +107,11 @@ def load_single_position(timeframe, position):
 
             else:
                 try:
-                    stock_price = download_price(ticker, date)
+                    if currency == 'GBp':
+                        stock_price = download_price(ticker, date) * 0.01
+                    else:
+                        stock_price = download_price(ticker, date)
+
                     sale_value = stock_price * volume
 
                 except Exception as e:
@@ -104,14 +119,11 @@ def load_single_position(timeframe, position):
                     timeframe.drop(index, inplace=True)
                     continue
 
-            purchase_value_in_pln = purchase_value * exchange_rate_for_purchase_value
-            sale_value_in_pln = sale_value * exchange_rate
+            purchase_value_in_currency = purchase_value * exchange_rate_for_purchase_value
+            sale_value_in_currency = sale_value * exchange_rate
 
-            timeframe.loc[index, 'Purchase value'] += purchase_value
-            timeframe.loc[index, 'Current value'] += sale_value
-
-            timeframe.loc[index, 'Purchase value in PLN'] += purchase_value_in_pln
-            timeframe.loc[index, 'Current value in PLN'] += sale_value_in_pln
+            timeframe.loc[index, f'Purchase value in {currency_of_portfolio}'] += purchase_value_in_currency
+            timeframe.loc[index, f'Current value in {currency_of_portfolio}'] += sale_value_in_currency
 
 
     except Exception as e:
@@ -125,12 +137,12 @@ def load_and_format_positions(positions):
 
         for _, position in tqdm(positions.iterrows(), desc='Loading timeframe', total=len(positions)):
             load_single_position(timeframe, position)
+            os.makedirs("output", exist_ok=True)
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            timeframe.to_excel(f"output/{timestamp} during {position['Formatted Symbol']}.xlsx")
 
-        timeframe['Total change [%]'] = round(
-            (timeframe['Current value'] / timeframe['Purchase value'] - 1) * 100, 2)
-
-        timeframe['Total change [%] in PLN'] = round(
-            (timeframe['Current value in PLN'] / timeframe['Purchase value in PLN'] - 1) * 100, 2)
+        timeframe[f'Total change [%] in {currency_of_portfolio}'] = round(
+            (timeframe[f'Current value in {currency_of_portfolio}'] / timeframe[f'Purchase value in {currency_of_portfolio}'] - 1) * 100, 2)
 
         return timeframe
 
